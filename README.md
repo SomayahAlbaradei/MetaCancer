@@ -19,7 +19,7 @@ Activate your virtual environment:
  $ source activate deepmet 
 ```
 
-To run an Acceptor model:
+To run the model:
 
 ```
   $ python deepmet.py  Input= 'pass file' Output='output file name'
