@@ -27,6 +27,7 @@ To run an Acceptor model:
     
 ```
 Predections will be stored in output file.
+```
 
 
 
