@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
 
-
-get_ipython().run_line_magic('matplotlib', 'notebook')
-
-
-# In[2]:
 
 
 import numpy as np
@@ -18,8 +12,10 @@ import keras.backend as K
 from tensorflow.keras.callbacks import EarlyStopping
 from keras.regularizers import l2
 early_stopping = EarlyStopping(patience=3, monitor='loss')
+
+
 class Sampling(layers.Layer):
-    """Uses (z_mean, z_log_var) to sample z, the vector encoding a digit."""
+#   """Uses (z_mean, z_log_var) to sample z, the vector encoding a digit."""
 
     def call(self, inputs):
         z_mean, z_log_var = inputs
@@ -32,7 +28,6 @@ class Sampling(layers.Layer):
         return z_mean + tf.exp(0.5 * z_log_var) * epsilon
 
 
-# In[5]:
 
 
 'TensorFlow version: ' + K.tf.__version__
@@ -40,7 +35,7 @@ class Sampling(layers.Layer):
 
 # #### Dataset 
 
-# In[7]:
+## Each sample has integrated omics data which represented as a vector:
 
 
 omic_rows, omic_cols, omic_chns = x_train.shape[1:]
@@ -48,7 +43,6 @@ omic_rows, omic_cols, omic_chns = x_train.shape[1:]
 
 # ##### Constant definitions
 
-# In[8]:
 
 
 original_dim = omic_rows * omic_cols
@@ -59,11 +53,17 @@ epochs = 100
 
 # ## Model specification
 
+# Define the encoder and decoder networks
+
+# In this CVAE example, 
+#use two ConvNets for the encoder and decoder networks. 
+#Tthese networks are also known as inference/recognition and generative models.
+
 # ### Encoder
 
 # #### Inference network
 
-# In[9]:
+
 
 
 x = Input(shape=(original_dim,), name='x')
@@ -72,9 +72,6 @@ h = Dense(intermediate_dim, activation='relu',
 z_mu = Dense(latent_dim, name='mu')(h)
 z_log_var = Dense(latent_dim, name='log_var')(h)
 z_sigma = Lambda(lambda t: K.exp(.5*t), name='sigma')(z_log_var)
-
-
-# In[ ]:
 
 
 
@@ -93,7 +90,9 @@ encoder = keras.Model(encoder_inputs, [z_mean, z_log_var, z], name="encoder")
 encoder.summary()
 
 
-# In[ ]:
+# Decoder network
+#This defines the conditional distribution of the observation,
+#which takes a latent sample as input and outputs the parameters for a conditional distribution of the observation. 
 
 
 latent_inputs = keras.Input(shape=(latent_dim,))
@@ -108,7 +107,10 @@ decoder = keras.Model(latent_inputs, decoder_outputs, name="decoder")
 decoder.summary()
 
 
-# In[ ]:
+# Network architecture
+# For the encoder network, use two convolutional layers followed by a fully-connected layer. 
+#In the decoder network, mirror this architecture by using a fully-connected layer followed by convolution transpose layers (a.k.a. deconvolutional layers) 
+
 
 
 class CVAE(keras.Model):
