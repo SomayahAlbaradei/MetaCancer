@@ -2,7 +2,8 @@
 # coding: utf-8
 
 
-
+## Convolutional variational autoencoder CVAE for feature extraction.
+# We used an autoencoder (AE)-based architecture29 to automatically extract features and reduce the input data’s dimensionality.
 
 import numpy as np
 import tensorflow as tf
